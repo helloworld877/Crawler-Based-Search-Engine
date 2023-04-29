@@ -47,7 +47,7 @@ public class Main {
                 {
 
                 new Seed_Getter().Set_Seeds("Seeds.bak", url_queue, total_processed_links.get());
-                }
+                }   
 
             }
         }, "Shutdown-thread"));
