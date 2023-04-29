@@ -13,7 +13,7 @@ import java.util.Queue;
 
 public class Main {
     public static void main(String[] args) {
-        String seed = "https://google.com";
+        String seed = "https://en.wikipedia.org/wiki/Main_Page";
 
 //        links Queue
         Queue<String> url_queue = new LinkedList<>();
@@ -30,9 +30,15 @@ public class Main {
                 Connection.Response res = Jsoup.connect(url)
                         .userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21")
                         .timeout(10000)
+                        .ignoreHttpErrors(true)
                         .execute();
 
-                    System.out.println(res.statusCode());
+                System.out.println("URL: "+url+"Status code: "+ res.statusCode());
+
+                if(res.statusCode()>=400)
+                {
+                    continue;
+                }
 
                 Document doc = res.parse();
                 Elements tags = doc.select("a[href]");
@@ -54,8 +60,12 @@ public class Main {
 
 
             } catch (IOException e) {
-                System.out.println(e);
+                throw new RuntimeException(e);
             }
         }
+
+        //shutdown script
+
+
     }
 }
