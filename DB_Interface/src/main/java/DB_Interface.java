@@ -40,6 +40,10 @@ public class DB_Interface {
             {
                 String l = sc.nextLine();
                 String [] line = l.split(",");
+                if(line.length <3)
+                {
+                    continue;
+                }
                 documentList.add(new Document()
                     .append("URL",line[0])
                     .append("TITLE",line[1])
