@@ -12,6 +12,7 @@ import java.util.Scanner;
 public class Seed_Getter {
 
 
+
     public Seed_Getter() {
 
     }
@@ -27,6 +28,7 @@ public class Seed_Getter {
 
                 sc = new Scanner(backup);
                 String line;
+
                 while (sc.hasNextLine()) {
                     line = sc.nextLine();
                     Seeds.add(line);
@@ -48,6 +50,7 @@ public class Seed_Getter {
 
             sc = new Scanner(Seed_file);
             String line;
+            Seeds.add(String.valueOf(0));
             while (sc.hasNextLine()) {
                 line = sc.nextLine();
                 Seeds.add(line);
@@ -61,10 +64,11 @@ public class Seed_Getter {
 
     }
 
-    public void Set_Seeds(String backup_Path, Queue<String> url_queue) {
+    public void Set_Seeds(String backup_Path, Queue<String> url_queue,int processed_links) {
         try {
             FileWriter f = new FileWriter(backup_Path);
             ArrayList<String> backup_data = new ArrayList<>();
+            backup_data.add(String.valueOf(processed_links));
             while (!url_queue.isEmpty()) {
                 backup_data.add(url_queue.peek());
                 url_queue.remove();
