@@ -13,6 +13,15 @@ import java.util.Queue;
 
 public class Main {
     public static void main(String[] args) {
+
+        //shutdown script
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+               System.out.println("exit hook");
+            }
+        }, "Shutdown-thread"));
+
+
         String seed = "https://en.wikipedia.org/wiki/Main_Page";
 
 //        links Queue
@@ -64,7 +73,7 @@ public class Main {
             }
         }
 
-        //shutdown script
+
 
 
     }
