@@ -15,6 +15,7 @@ public class Main {
     public static void main(String[] args) {
 
 
+//        get seeds for the program
         ArrayList<String> seeds = new Seed_Getter().Get_Seeds("Seeds.bak");
         String seed = seeds.get(0);
 
@@ -34,9 +35,13 @@ public class Main {
         while (!url_queue.isEmpty()) {
 
             try {
+//                output file for the processed links
+//                the format of the file is : link,title, space separated Keywords
                 FileWriter f = new FileWriter("processed_links.txt",true);
+//                get ur to process
                 String url = url_queue.peek();
                 url_queue.remove();
+//                connect to url to get the HTML page
                 Connection.Response res = Jsoup.connect(url)
                         .userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21")
                         .timeout(10000)
@@ -45,12 +50,15 @@ public class Main {
 
                 System.out.println("URL: "+url+"Status code: "+ res.statusCode());
 
+//                check if connection resulted in error
                 if(res.statusCode()>=400)
                 {
                     continue;
                 }
 
+//                parse the HTML
                 Document doc = res.parse();
+//                getting the anchor tags in the document
                 Elements tags = doc.select("a[href]");
                 //          Title of the Document
                 String Title = doc.title();
@@ -59,11 +67,12 @@ public class Main {
                 //`         All Keywords in the document
                 String Keywords = doc.body().text();
                 for (org.jsoup.nodes.Element tag : tags) {
+//                    extracting links to add to the queue to be processed
                     if (tag.attr("href").startsWith("http")) {
                         url_queue.add(tag.attr("href"));
                     }
                 }
-
+//              add the the result of processing the link to the text file
                 f.write(url + "," + Title + "," + Keywords + "\n");
                 f.flush();
                 f.close();
