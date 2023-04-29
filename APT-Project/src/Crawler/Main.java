@@ -10,13 +10,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 //      Max Number of pages to crawl
         final int MAX_PAGES = 1000;
 
-
+//      processed links file
+        FileWriter f= null;
 //      total processed links
         final Wrapper<Integer> total_processed_links = new Wrapper<>(0);
 //      get seeds for the program
@@ -33,72 +35,43 @@ public class Main {
         //shutdown script
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
+                // some time passes
+                long end = System.currentTimeMillis();
+                long elapsedTime = end - start;
+                long hours = (elapsedTime / (1000 * 60 * 60)) % 24;
+                long minutes = (elapsedTime / (1000 * 60)) % 60;
+                long seconds = (elapsedTime / 1000) % 60;
+
+                System.out.println(hours + ":" + minutes + ":" + seconds);
+                if(total_processed_links.get()<MAX_PAGES)
+                {
 
                 new Seed_Getter().Set_Seeds("Seeds.bak", url_queue, total_processed_links.get());
+                }
+
             }
         }, "Shutdown-thread"));
 
-
-        while (!url_queue.isEmpty() && total_processed_links.get() < MAX_PAGES) {
-
-            try {
-//                output file for the processed links
-//                the format of the file is : link,title, space separated Keywords
-                FileWriter f = new FileWriter("processed_links.txt", true);
-//                get ur to process
-                String url = url_queue.peek();
-                url_queue.remove();
-//                connect to url to get the HTML page
-                Connection.Response res = Jsoup.connect(url)
-                        .userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21")
-                        .timeout(10000)
-                        .ignoreHttpErrors(true)
-                        .execute();
+        Scanner sc =new Scanner(System.in);
+        System.out.println("how many threads you want to run ?");
+        int threads=sc.nextInt();
 
 
-//                check if connection resulted in error
-                if (res.statusCode() >= 400) {
-                    continue;
-                }
-                total_processed_links.set(total_processed_links.get() + 1);
-                System.out.println("URL: " + url + "Status code: " + res.statusCode() + " link number: " + total_processed_links.get());
+        try {
+            f = new FileWriter("processed_links.txt",true);
+            for (int i = 0; i < threads; i++) {
+                link_Processor thread = new link_Processor(url_queue, f, total_processed_links, MAX_PAGES);
+                thread.start();
 
-//                parse the HTML
-                Document doc = res.parse();
-//                getting the anchor tags in the document
-                Elements tags = doc.select("a[href]");
-                //          Title of the Document
-                String Title = doc.title();
-                //            all anchor tags in document
-                ArrayList<String> links = new ArrayList<String>();
-                //`         All Keywords in the document
-                String Keywords = doc.body().text();
-                for (org.jsoup.nodes.Element tag : tags) {
-//                    extracting links to add to the queue to be processed
-                    if (tag.attr("href").startsWith("http")) {
-                        url_queue.add(tag.attr("href"));
-                    }
-                }
-//              add the result of processing the link to the text file
-
-                f.write(url + "," + Title + "," + Keywords + "\n");
-                f.flush();
-                f.close();
-
-
-            } catch (IOException e) {
-                System.out.println(e);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        // some time passes
-        long end = System.currentTimeMillis();
-        long elapsedTime = end - start;
-        long hours = (elapsedTime / (1000 * 60 * 60)) % 24;
-        long minutes = (elapsedTime / (1000 * 60)) % 60;
-        long seconds = (elapsedTime / 1000) % 60;
 
-        System.out.println(hours + ":" + minutes + ":" + seconds);
+
+
+
 
 
     }
