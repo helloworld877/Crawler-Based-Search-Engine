@@ -14,26 +14,27 @@ import java.util.Queue;
 public class Main {
     public static void main(String[] args) {
 
-        //shutdown script
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
-               System.out.println("exit hook");
-            }
-        }, "Shutdown-thread"));
 
-
-        String seed = "https://en.wikipedia.org/wiki/Main_Page";
+        ArrayList<String> seeds = new Seed_Getter().Get_Seeds("Seeds.bak");
+        String seed = seeds.get(0);
 
 //        links Queue
         Queue<String> url_queue = new LinkedList<>();
         url_queue.add(seed);
+        //shutdown script
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+
+               new Seed_Getter().Set_Seeds("Seeds.bak",url_queue);
+            }
+        }, "Shutdown-thread"));
 
 
 
         while (!url_queue.isEmpty()) {
 
             try {
-                FileWriter f = new FileWriter("C:\\Users\\Mark\\Desktop\\APT Project\\APT-Project\\APT-Project\\src\\Crawler\\processed_links.txt",true);
+                FileWriter f = new FileWriter("processed_links.txt",true);
                 String url = url_queue.peek();
                 url_queue.remove();
                 Connection.Response res = Jsoup.connect(url)
