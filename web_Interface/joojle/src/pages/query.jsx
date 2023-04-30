@@ -1,6 +1,8 @@
 //query page
 
+import { useState } from "react";
+
 function query() {
-  return <h1>query result</h1>;
+    return <h1> search result</h1>;
 }
 export default query;
