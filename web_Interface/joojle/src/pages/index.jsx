@@ -34,16 +34,16 @@ function Home(params) {
                         </div>
                     </div>
                     <div className="col">
-                        <div class="row height d-flex justify-content-center align-items-center">
-                            <div class="col-md-6">
-                                <div class={styles.form}>
+                        <div className="row height d-flex justify-content-center align-items-center">
+                            <div className="col-md-6">
+                                <div className={styles.form}>
                                     <FontAwesomeIcon
                                         icon={faMagnifyingGlass}
                                         className={styles.faSearch}
                                     />
                                     <input
                                         type="text"
-                                        class={`${styles.formControl} ${styles.formInput}`}
+                                        className={`${styles.formControl} ${styles.formInput}`}
                                         placeholder="Search anything..."
                                         onChange={handleChange}
                                     />

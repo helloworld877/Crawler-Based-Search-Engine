@@ -1,8 +1,13 @@
 //query page
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function query() {
-    return <h1> search result</h1>;
+    const [q, setQ] = useState();
+    useEffect(() => {
+        setQ(new URLSearchParams(window.location.search).get("q"));
+    });
+
+    return <h1> {q}</h1>;
 }
 export default query;
