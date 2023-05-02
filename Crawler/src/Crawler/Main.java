@@ -16,6 +16,7 @@ public class Main {
 
 //      processed links file
         FileWriter f = null;
+        FileWriter popularity_table;
 //      total processed links
         final Wrapper<Integer> total_processed_links = new Wrapper<>(0);
 //      get seeds for the program
@@ -70,8 +71,9 @@ public class Main {
 
         try {
             f = new FileWriter("processed_links.txt", true);
+            popularity_table=new FileWriter("popularity.txt",true);
             for (int i = 0; i < threads; i++) {
-                link_Processor thread = new link_Processor(url_blocking_queue, f, total_processed_links, MAX_PAGES, visited);
+                link_Processor thread = new link_Processor(url_blocking_queue, f, total_processed_links, MAX_PAGES, visited,popularity_table);
                 thread.start();
 
             }

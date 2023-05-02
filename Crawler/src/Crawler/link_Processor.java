@@ -25,13 +25,15 @@ public class link_Processor extends Thread {
     private int MAX_PAGES;
 
     private ArrayList<String> visited;
+    private FileWriter popularity_table;
 
-    public link_Processor(BlockingQueue url_queue, FileWriter f, Wrapper<Integer> total_processed_links, int MAX_PAGES, ArrayList<String> visited) {
+    public link_Processor(BlockingQueue url_queue, FileWriter f, Wrapper<Integer> total_processed_links, int MAX_PAGES, ArrayList<String> visited, FileWriter popularity_table) {
         this.url_queue = url_queue;
         this.f = f;
         this.total_processed_links = total_processed_links;
         this.MAX_PAGES = MAX_PAGES;
         this.visited = visited;
+        this.popularity_table=popularity_table;
     }
 
     public void run() {
@@ -119,12 +121,21 @@ public class link_Processor extends Thread {
 
                 Keywords=Keywords.replaceAll("\\n+", " ");
                 Keywords= Keywords.replaceAll("\\s+", " ");
-                for (org.jsoup.nodes.Element tag : tags) {
-//                    extracting links to add to the queue to be processed
-                    if (tag.attr("href").startsWith("http")) {
-                        url_queue.add(tag.attr("href"));
+               synchronized (popularity_table)
+               {
+
+                    for (org.jsoup.nodes.Element tag : tags) {
+    //                    extracting links to add to the queue to be processed
+                        if (tag.attr("href").startsWith("http")) {
+                            url_queue.add(tag.attr("href"));
+
+
+                            popularity_table.write(url+"~~~"+Normalizer.normalize(tag.attr("href"))+"\n" );
+                            popularity_table.flush();
+
+                        }
                     }
-                }
+               }
                 System.out.println("URL: " + url + "Status code: " + res.statusCode() + " link number: " + total_processed_links.get() + " From Thread: " + this.getId());
 
 

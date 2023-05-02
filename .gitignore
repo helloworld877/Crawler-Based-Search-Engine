@@ -3,3 +3,4 @@ Crawler/processed_links.txt
 Crawler/Seeds.bak
 DB_Interface/processed_links.txt
 Crawler/visited.bak
+Crawler/popularity.txt
