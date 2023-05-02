@@ -67,9 +67,9 @@ public class link_Processor extends Thread {
                         .timeout(3000)
                         .ignoreHttpErrors(true)
                         .execute();
-
                 //              link already visited
                 if (visited.contains(Normalizer.normalize(url))) {
+
                     continue;
                 }
 //              added current link to visited
@@ -81,6 +81,7 @@ public class link_Processor extends Thread {
 
 //                  check if connection resulted in error or exceeded maximum
                 if (res.statusCode() >= 400) {
+
 
                     continue;
                 }
@@ -97,9 +98,11 @@ public class link_Processor extends Thread {
                 //`         All Keywords in the document
                 String Keywords = doc.body().text();
 
-                Pattern latinPattern = Pattern.compile("^[\\p{Alnum}\\p{Punct}\\s]+$");
+
+                Pattern latinPattern = Pattern.compile("\\p{InArabic}");
                 Matcher matcher = latinPattern.matcher(Keywords);
                 if (matcher.find()) {
+                    System.out.println(url);
 //                    string doesn't contain English only
                     continue;
                 }
