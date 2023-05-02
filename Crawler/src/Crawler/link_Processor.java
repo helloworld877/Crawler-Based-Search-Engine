@@ -10,12 +10,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class link_Processor extends Thread {
 
-    private Queue<String> url_queue;
+    private BlockingQueue<String> url_queue;
     private FileWriter f;
 
     private Wrapper<Integer> total_processed_links;
@@ -24,7 +25,7 @@ public class link_Processor extends Thread {
 
     private ArrayList<String> visited;
 
-    public link_Processor(Queue<String> url_queue, FileWriter f, Wrapper<Integer> total_processed_links, int MAX_PAGES, ArrayList<String> visited) {
+    public link_Processor(BlockingQueue url_queue, FileWriter f, Wrapper<Integer> total_processed_links, int MAX_PAGES, ArrayList<String> visited) {
         this.url_queue = url_queue;
         this.f = f;
         this.total_processed_links = total_processed_links;
@@ -41,6 +42,7 @@ public class link_Processor extends Thread {
             condition = condition && (total_processed_links.get() < MAX_PAGES);
         }
 
+
         while (condition) {
 
             try {
@@ -50,18 +52,22 @@ public class link_Processor extends Thread {
 
 //              get url to process
                 String url;
+
                 synchronized (url_queue) {
-                    url = url_queue.peek();
-                    url_queue.remove();
+                    url = url_queue.take();
+//                    url_queue.remove();
                 }
+
+
 
 
 //                connect to url to get the HTML page
                 Connection.Response res = Jsoup.connect(url)
                         .userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21")
-                        .timeout(10000)
+                        .timeout(3000)
                         .ignoreHttpErrors(true)
                         .execute();
+
                 //              link already visited
                 if (visited.contains(Normalizer.normalize(url))) {
                     continue;
@@ -75,8 +81,11 @@ public class link_Processor extends Thread {
 
 //                  check if connection resulted in error or exceeded maximum
                 if (res.statusCode() >= 400) {
+
                     continue;
                 }
+
+
 //              parse the HTML
                 Document doc = res.parse();
 //                getting the anchor tags in the document
@@ -88,9 +97,9 @@ public class link_Processor extends Thread {
                 //`         All Keywords in the document
                 String Keywords = doc.body().text();
 
-                Pattern latinPattern = Pattern.compile("\\p{InBASIC_LATIN}+$");
+                Pattern latinPattern = Pattern.compile("^[\\p{Alnum}\\p{Punct}\\s]+$");
                 Matcher matcher = latinPattern.matcher(Keywords);
-                if (!matcher.find()) {
+                if (matcher.find()) {
 //                    string doesn't contain English only
                     continue;
                 }
@@ -148,6 +157,8 @@ public class link_Processor extends Thread {
 
             } catch (IOException e) {
                 System.out.println(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 

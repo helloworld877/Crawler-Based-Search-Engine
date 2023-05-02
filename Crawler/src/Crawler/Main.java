@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class Main {
     public static void main(String[] args) {
 //      Max Number of pages to crawl
-        final int MAX_PAGES = 1000;
+        final int MAX_PAGES = 6000;
 
 //      processed links file
         FileWriter f = null;
@@ -28,7 +28,8 @@ public class Main {
 
 //        links Queue
         Queue<String> url_queue = new LinkedList<>(seeds);
-        BlockingQueue<String> url_blocking_queue = new LinkedBlockingDeque<>();
+        BlockingQueue<String> url_blocking_queue = new LinkedBlockingDeque<>(url_queue);
+
         ArrayList<String> visited = new ArrayList<>();
 
         //shutdown script
@@ -45,8 +46,12 @@ public class Main {
                 if (total_processed_links.get() < MAX_PAGES) {
                     Queue<String> queue = new LinkedList<>();
                     queue.addAll(visited);
-                    new Seed_Getter().Set_Seeds("Seeds.bak", url_queue, total_processed_links.get());
-                    new Seed_Getter().Set_Seeds("visited.bak", url_blocking_queue, 0);
+
+                    Queue<String> url_queue_bak = url_blocking_queue;
+
+
+                    new Seed_Getter().Set_Seeds("Seeds.bak", url_queue_bak, total_processed_links.get());
+                    new Seed_Getter().Set_Seeds("visited.bak", queue, 0);
 
                 }
 
@@ -62,7 +67,7 @@ public class Main {
         try {
             f = new FileWriter("processed_links.txt", true);
             for (int i = 0; i < threads; i++) {
-                link_Processor thread = new link_Processor(url_queue, f, total_processed_links, MAX_PAGES, visited);
+                link_Processor thread = new link_Processor(url_blocking_queue, f, total_processed_links, MAX_PAGES, visited);
                 thread.start();
 
             }
