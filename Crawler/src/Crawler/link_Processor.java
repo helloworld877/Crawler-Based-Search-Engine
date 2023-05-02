@@ -56,21 +56,19 @@ public class link_Processor extends Thread {
                         .execute();
 
 
-
                 synchronized (total_processed_links) {
 
 //                  check if connection resulted in error or exceeded maximum
-                    if (res.statusCode() >= 400 ) {
+                    if (res.statusCode() >= 400) {
                         continue;
                     }
-                    if( total_processed_links.get()+1>MAX_PAGES)
-                    {
+                    if (total_processed_links.get() + 1 > MAX_PAGES) {
                         break;
                     }
 
                     total_processed_links.set(total_processed_links.get() + 1);
                 }
-                System.out.println("URL: " + url + "Status code: " + res.statusCode() + " link number: " + total_processed_links.get() + " From Thread: "+this.getId());
+                System.out.println("URL: " + url + "Status code: " + res.statusCode() + " link number: " + total_processed_links.get() + " From Thread: " + this.getId());
 
 //                parse the HTML
                 Document doc = res.parse();
@@ -82,18 +80,34 @@ public class link_Processor extends Thread {
                 ArrayList<String> links = new ArrayList<String>();
                 //`         All Keywords in the document
                 String Keywords = doc.body().text();
-                Keywords.replaceAll("\n"," ");
+                Keywords.replaceAll("\n", " ");
                 for (org.jsoup.nodes.Element tag : tags) {
 //                    extracting links to add to the queue to be processed
                     if (tag.attr("href").startsWith("http")) {
                         url_queue.add(tag.attr("href"));
                     }
                 }
+
+//                stringOperations
+                stringOperations op = new stringOperations();
+//                Normalize Keywords
+                String cleanedKeywords = op.Operate(1, Keywords);
+//                Remove stop words Keywords
+                cleanedKeywords= op.Operate(3, cleanedKeywords);
+//                Stemming Keywords
+                cleanedKeywords= op.Operate(2,cleanedKeywords);
+
+//                Normalize Title
+                Title= op.Operate(1,Title);
+
+//                Normalize URL
+                url=op.Operate(1,url);
+
+
 //              add the result of processing the link to the text file
                 synchronized (f) {
-                    f.write(url + "," + Title + "," + Keywords + "\n");
+                    f.write(url + "," + Title + "," + Keywords + "," + cleanedKeywords + "\n");
                     f.flush();
-
 
 
                 }
