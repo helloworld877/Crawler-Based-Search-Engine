@@ -19,7 +19,7 @@ public class Main {
 //      total processed links
         final Wrapper<Integer> total_processed_links = new Wrapper<>(0);
 //      get seeds for the program
-        ArrayList<String> seeds = new Seed_Getter().Get_Seeds("Seeds.bak");
+        ArrayList<String> seeds = new Seed_Getter().Get_Seeds("Seeds.bak",0);
         total_processed_links.set(Integer.parseInt(seeds.get(0)));
         seeds = new ArrayList<>(seeds.subList(1, seeds.size()));
 
@@ -30,8 +30,12 @@ public class Main {
         Queue<String> url_queue = new LinkedList<>(seeds);
         BlockingQueue<String> url_blocking_queue = new LinkedBlockingDeque<>(url_queue);
 
-        ArrayList<String> visited = new ArrayList<>();
 
+
+
+        ArrayList<String> visited = new Seed_Getter().Get_Seeds("visited.bak",1);
+        visited = new ArrayList<>(visited.subList(1, visited.size()));
+        ArrayList<String> finalVisited = visited;
         //shutdown script
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
@@ -45,7 +49,7 @@ public class Main {
                 System.out.println(hours + ":" + minutes + ":" + seconds);
                 if (total_processed_links.get() < MAX_PAGES) {
                     Queue<String> queue = new LinkedList<>();
-                    queue.addAll(visited);
+                    queue.addAll(finalVisited);
 
                     Queue<String> url_queue_bak = url_blocking_queue;
 

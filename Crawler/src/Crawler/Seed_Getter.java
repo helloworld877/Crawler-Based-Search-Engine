@@ -17,7 +17,7 @@ public class Seed_Getter {
 
     }
 
-    public ArrayList<String> Get_Seeds( String PATH) {
+    public ArrayList<String> Get_Seeds( String PATH,int mode) {
         File backup = new File(PATH);
         ArrayList<String> Seeds = new ArrayList<String>();
         if (backup.exists() && backup.length()!=0) {
@@ -41,6 +41,12 @@ public class Seed_Getter {
             }
 
 
+        }
+        if(mode==1)
+        {
+            System.out.println("no backup file so no previously visited sites");
+            Seeds.add(String.valueOf(0));
+            return Seeds;
         }
         //program is running for the first time,or we deleted the backup file
         System.out.println("no backup file getting original seeds");
