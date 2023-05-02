@@ -9,8 +9,8 @@ import org.jsoup.select.Elements;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,11 +35,9 @@ public class link_Processor extends Thread {
 
     public void run() {
         Boolean condition;
-        synchronized (url_queue) {
-            condition = !url_queue.isEmpty();
-        }
+
         synchronized (total_processed_links) {
-            condition = condition && (total_processed_links.get() < MAX_PAGES);
+            condition = (total_processed_links.get() < MAX_PAGES);
         }
 
 
@@ -53,12 +51,14 @@ public class link_Processor extends Thread {
 //              get url to process
                 String url;
 
-                synchronized (url_queue) {
-                    url = url_queue.take();
-//                    url_queue.remove();
+
+                url = url_queue.poll(10, TimeUnit.SECONDS);
+                if (url == null) {
+//                        queue is empty
+
+                    break;
                 }
-
-
+//                    url_queue.remove();
 
 
 //                connect to url to get the HTML page
@@ -75,8 +75,6 @@ public class link_Processor extends Thread {
 //              added current link to visited
 
                 visited.add(Normalizer.normalize(url));
-
-
 
 
 //                  check if connection resulted in error or exceeded maximum
@@ -102,7 +100,7 @@ public class link_Processor extends Thread {
                 Pattern latinPattern = Pattern.compile("\\p{InArabic}");
                 Matcher matcher = latinPattern.matcher(Keywords);
                 if (matcher.find()) {
-                    System.out.println(url);
+
 //                    string doesn't contain English only
                     continue;
                 }
@@ -150,9 +148,6 @@ public class link_Processor extends Thread {
                     f.flush();
 
 
-                }
-                synchronized (url_queue) {
-                    condition = !url_queue.isEmpty();
                 }
                 synchronized (total_processed_links) {
                     condition = condition && (total_processed_links.get() < MAX_PAGES);
