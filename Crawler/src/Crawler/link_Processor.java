@@ -146,7 +146,7 @@ public class link_Processor extends Thread {
 
 //              add the result of processing the link to the text file
                 synchronized (f) {
-                    f.write(url + "~" + Title + "~" + Keywords + "~" + cleanedKeywords + "\n");
+                    f.write(url + "~~~" + Title + "~~~" + Keywords + "~~~" + cleanedKeywords + "\n");
                     f.flush();
 
 
