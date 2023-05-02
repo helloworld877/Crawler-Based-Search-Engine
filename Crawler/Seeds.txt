@@ -1,9 +1,1 @@
-https://arabic.cnn.com/
-https://www.reddit.com/
-https://www.youtube.com/
-https://www.buzzfeed.com/
-https://tasty.co/
-https://www.foodnetwork.com/
-https://www.simplyrecipes.com/
-https://www.thespruceeats.com/
-https://www.twitter.com/
+https://react.dev/learn

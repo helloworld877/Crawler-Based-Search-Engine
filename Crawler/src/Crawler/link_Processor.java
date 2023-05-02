@@ -8,6 +8,7 @@ import org.jsoup.select.Elements;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -116,7 +117,8 @@ public class link_Processor extends Thread {
                 }
 
 
-                Keywords.replaceAll("\n", " ");
+                Keywords=Keywords.replaceAll("\\n+", " ");
+                Keywords= Keywords.replaceAll("\\s+", " ");
                 for (org.jsoup.nodes.Element tag : tags) {
 //                    extracting links to add to the queue to be processed
                     if (tag.attr("href").startsWith("http")) {
