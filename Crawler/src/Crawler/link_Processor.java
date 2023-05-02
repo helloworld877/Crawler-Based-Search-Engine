@@ -2,6 +2,7 @@ package Crawler;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.internal.Normalizer;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -9,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class link_Processor extends Thread {
 
@@ -19,11 +22,14 @@ public class link_Processor extends Thread {
 
     private int MAX_PAGES;
 
-    public link_Processor(Queue<String> url_queue, FileWriter f, Wrapper<Integer> total_processed_links, int MAX_PAGES) {
+    private ArrayList<String> visited;
+
+    public link_Processor(Queue<String> url_queue, FileWriter f, Wrapper<Integer> total_processed_links, int MAX_PAGES, ArrayList<String> visited) {
         this.url_queue = url_queue;
         this.f = f;
         this.total_processed_links = total_processed_links;
         this.MAX_PAGES = MAX_PAGES;
+        this.visited = visited;
     }
 
     public void run() {
@@ -48,29 +54,30 @@ public class link_Processor extends Thread {
                     url = url_queue.peek();
                     url_queue.remove();
                 }
+
+
 //                connect to url to get the HTML page
                 Connection.Response res = Jsoup.connect(url)
                         .userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21")
                         .timeout(10000)
                         .ignoreHttpErrors(true)
                         .execute();
+                //              link already visited
+                if (visited.contains(Normalizer.normalize(url))) {
+                    continue;
+                }
+//              added current link to visited
+
+                visited.add(Normalizer.normalize(url));
 
 
-                synchronized (total_processed_links) {
+
 
 //                  check if connection resulted in error or exceeded maximum
-                    if (res.statusCode() >= 400) {
-                        continue;
-                    }
-                    if (total_processed_links.get() + 1 > MAX_PAGES) {
-                        break;
-                    }
-
-                    total_processed_links.set(total_processed_links.get() + 1);
+                if (res.statusCode() >= 400) {
+                    continue;
                 }
-                System.out.println("URL: " + url + "Status code: " + res.statusCode() + " link number: " + total_processed_links.get() + " From Thread: " + this.getId());
-
-//                parse the HTML
+//              parse the HTML
                 Document doc = res.parse();
 //                getting the anchor tags in the document
                 Elements tags = doc.select("a[href]");
@@ -80,6 +87,25 @@ public class link_Processor extends Thread {
                 ArrayList<String> links = new ArrayList<String>();
                 //`         All Keywords in the document
                 String Keywords = doc.body().text();
+
+                Pattern latinPattern = Pattern.compile("\\p{InBASIC_LATIN}+$");
+                Matcher matcher = latinPattern.matcher(Keywords);
+                if (!matcher.find()) {
+//                    string doesn't contain English only
+                    continue;
+                }
+
+
+                synchronized (total_processed_links) {
+
+                    if (total_processed_links.get() + 1 > MAX_PAGES) {
+                        break;
+                    }
+
+                    total_processed_links.set(total_processed_links.get() + 1);
+                }
+
+
                 Keywords.replaceAll("\n", " ");
                 for (org.jsoup.nodes.Element tag : tags) {
 //                    extracting links to add to the queue to be processed
@@ -87,26 +113,28 @@ public class link_Processor extends Thread {
                         url_queue.add(tag.attr("href"));
                     }
                 }
+                System.out.println("URL: " + url + "Status code: " + res.statusCode() + " link number: " + total_processed_links.get() + " From Thread: " + this.getId());
+
 
 //                stringOperations
                 stringOperations op = new stringOperations();
 //                Normalize Keywords
                 String cleanedKeywords = op.Operate(1, Keywords);
 //                Remove stop words Keywords
-                cleanedKeywords= op.Operate(3, cleanedKeywords);
+                cleanedKeywords = op.Operate(3, cleanedKeywords);
 //                Stemming Keywords
-                cleanedKeywords= op.Operate(2,cleanedKeywords);
+                cleanedKeywords = op.Operate(2, cleanedKeywords);
 
 //                Normalize Title
-                Title= op.Operate(1,Title);
+                Title = op.Operate(1, Title);
 
 //                Normalize URL
-                url=op.Operate(1,url);
+                url = op.Operate(1, url);
 
 
 //              add the result of processing the link to the text file
                 synchronized (f) {
-                    f.write(url + "," + Title + "," + Keywords + "," + cleanedKeywords + "\n");
+                    f.write(url + "~" + Title + "~" + Keywords + "~" + cleanedKeywords + "\n");
                     f.flush();
 
 
