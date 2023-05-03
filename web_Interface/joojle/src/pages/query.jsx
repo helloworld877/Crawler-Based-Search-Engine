@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import SearchResult from "@/components/SearchResult";
+import axios from "axios";
 
 function query() {
     const [q, setQ] = useState();
@@ -9,12 +10,10 @@ function query() {
 
     useEffect(() => {
         async function getResults(q) {
-            const res = await fetch(
-                "https://jsonplaceholder.typicode.com/comments"
-            );
+            const res = await fetch("http://localhost:8080/query?q=test");
             const json = await res.json();
             var mapped_items = await json.map((item) => {
-                return <SearchResult key={item.id} id={item.id} />;
+                return <SearchResult key={item.id} id={item.body} />;
             });
             await setResult(mapped_items);
         }
