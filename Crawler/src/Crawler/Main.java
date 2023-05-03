@@ -9,6 +9,8 @@ import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
+
+
 public class Main {
     public static void main(String[] args) {
 //      Max Number of pages to crawl
@@ -25,6 +27,9 @@ public class Main {
         seeds = new ArrayList<>(seeds.subList(1, seeds.size()));
 
         long start = System.currentTimeMillis();
+
+
+
 
 
 //        links Queue
