@@ -5,3 +5,4 @@ DB_Interface/processed_links.txt
 Crawler/visited.bak
 Crawler/popularity.txt
 Indexer/processed_links.txt
+Indexer/popularity.txt
