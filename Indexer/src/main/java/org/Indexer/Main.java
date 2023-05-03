@@ -33,7 +33,7 @@ public class Main {
 
         ArrayList<String> uniqueKeywords = new keywordProcessor(crawlerData).getUniqueKeywords();
 
-        System.out.println(uniqueKeywords.size());
+//        System.out.println(uniqueKeywords.size());
 
         HashMap<String, ArrayList<urlOccurrence>> indexTable = new HashMap<>();
 
