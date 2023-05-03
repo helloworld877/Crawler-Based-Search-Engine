@@ -1,0 +1,85 @@
+/* JOOJLE LOGO */
+.Logo {
+    font-family: 'Nabla', cursive;;
+    font-size: 100px;
+    font-weight: bold;
+    
+}
+/* SearchInterface */
+.SearchInterface {
+    height: 100%;
+
+}
+
+.form{
+
+    position: relative;
+}
+
+
+
+.form span{
+
+        position: absolute;
+    right: 17px;
+    top: 13px;
+    padding: 2px;
+    border-left: 1px solid #d1d5db;
+
+}
+
+.left-pan{
+    padding-left: 7px;
+}
+
+.left-pan i{
+   
+   padding-left: 10px;
+}
+
+.formInput{
+
+    height: 55px;
+    text-indent: 33px;
+    border-radius: 10px;
+    width: 50%;
+}
+
+.formInput:focus{
+
+    box-shadow: none;
+    border:none;
+}
+
+.faSearch{
+
+    position: absolute;
+    top:20px;
+    left: 20px;
+    color: #9ca3af;
+
+}
+
+.pillButton{
+    background-color: #FF7F26;
+    border: none;
+    color: whitesmoke;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px 2px;
+    cursor: pointer;
+    border-radius: 30px;
+    width: 20%;
+}
+.btnDiv{
+    margin-top: 50px !important;
+}
+
+.resultsContainerTotal{
+    margin-left: 2%;
+}
+.resultItems{
+    margin-top: 10px;
+}
