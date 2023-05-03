@@ -14,7 +14,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class Main {
     public static void main(String[] args) {
 //      Max Number of pages to crawl
-        final int MAX_PAGES = 6000;
+        final int MAX_PAGES = 1000;
 
 //      processed links file
         FileWriter f = null;
