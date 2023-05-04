@@ -1,5 +1,7 @@
 package org.Indexer;
 
+import org.DBInterface_Index.DBInterface_Index;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -9,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.stream.Collectors;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -90,14 +93,17 @@ public class Main {
             Arrays.stream(l.getSTEMMED_KEYWORDS())
                     .collect(Collectors.groupingBy(s -> s))
                     .forEach((k, v) -> {
-                        indexTable.get(k).add(new urlOccurrence(l.getURL(), v.size(),from_link.get(l.getURL()),to_link.get(l.getURL()) ));
+                        indexTable.get(k).add(new urlOccurrence(l.getURL(), v.size(),from_link.get(l.getURL()),to_link.get(l.getURL()),l.getKEYWORDS() ));
                     });
 
 
         }
 
 
-        int x = 5;
+        new DBInterface_Index(indexTable);
+
+
+
 
     }
 }

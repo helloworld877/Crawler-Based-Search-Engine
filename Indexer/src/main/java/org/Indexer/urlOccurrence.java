@@ -1,12 +1,18 @@
 package org.Indexer;
 
-class urlOccurrence {
+public class urlOccurrence {
     private String urlString;
     private int occurrences;
     private int from;
     private int to;
 
-    public urlOccurrence(String urlString, int occurrences,Integer from,Integer to) {
+    private String Keywords;
+
+    public String getKeywords() {
+        return Keywords;
+    }
+
+    public urlOccurrence(String urlString, int occurrences, Integer from, Integer to, String Keywords) {
         this.urlString = urlString;
         this.occurrences = occurrences;
         if(from == null) {
@@ -24,6 +30,7 @@ class urlOccurrence {
             this.to=to;
 
         }
+        this.Keywords=Keywords;
     }
 
     public String getUrlString() {
@@ -44,6 +51,14 @@ class urlOccurrence {
 
     public void setFrom(int from) {
         this.from = from;
+    }
+
+    public int getFrom() {
+        return from;
+    }
+
+    public int getTo() {
+        return to;
     }
 
     public void setTo(int to) {
