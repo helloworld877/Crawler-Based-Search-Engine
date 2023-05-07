@@ -20,8 +20,12 @@ function query() {
             const res = await fetch(`http://localhost:8080/query?q=${q}`);
             const json = await res.json();
             var mapped_items = await json.map((item) => {
-                return <SearchResult key={item.id} q={q} />;
+                return <SearchResult key={item.id} res={item} />;
             });
+
+            if (mapped_items.length === 0) {
+                mapped_items = <h2>No Results 😭😢</h2>;
+            }
             await setResult(mapped_items);
         }
 
@@ -46,7 +50,9 @@ function query() {
                     </div>
                 </div>
                 <div className={`row ${styles.resultItems}`}>
-                    <div className="col">{result}</div>
+                    <div className="col">
+                        {result ? result : <h2>Loading⌚</h2>}
+                    </div>
                 </div>
             </div>
         </div>
