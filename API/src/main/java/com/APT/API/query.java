@@ -41,7 +41,11 @@ public class query {
                 // Find documents that contain multiple values for the same key
 
                 String keywordPattern = ".*"+exact_query +".*";
-                Document filter = new Document("KEYWORDS", new Document("$regex", keywordPattern));
+                Document filter = new Document("$or", new ArrayList<Document>() {{
+                    add(new Document("URL", new Document("$regex", keywordPattern)));
+                    add(new Document("KEYWORDS", new Document("$regex", keywordPattern)));
+                    add(new Document("TITLE", new Document("$regex", keywordPattern)));
+                }});
                 Document projection = new Document("TITLE", 1).append("URL", 1).append("KEYWORDS",1).append("_id", 0);
                 FindIterable<Document> iterable = collection.find(filter).projection(projection);
                 List<Document> documents = new ArrayList<>();
