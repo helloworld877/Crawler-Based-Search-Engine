@@ -23,7 +23,7 @@ public class query {
 //        to make JSON Object
         ArrayList<Document> result = new ArrayList<>();
 //        query empty
-        if (q.equals("")) {
+        if (q.equals("") || q.equals("\"\"") ) {
             return result;
         }
 
@@ -35,6 +35,11 @@ public class query {
         if (matcher.find()) {
             String connectionString = Connection_String;
             String exact_query = matcher.group(1);
+            exact_query = exact_query.trim();
+            if(exact_query.isEmpty())
+            {
+                return  result;
+            }
             try (var mongoClient = MongoClients.create(connectionString)) {
                 // Select database and collection
                 MongoDatabase database = mongoClient.getDatabase("Crawler");
