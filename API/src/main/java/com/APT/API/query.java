@@ -27,6 +27,7 @@ public class query {
             return result;
         }
 
+//        see if query contains double quotes
         Pattern pattern = Pattern.compile("\"([^\"]*)\"");
 
         Matcher matcher = pattern.matcher(q);
@@ -53,6 +54,7 @@ public class query {
                     add(new Document("KEYWORDS", new Document("$regex", keywordPattern)));
                     add(new Document("TITLE", new Document("$regex", keywordPattern)));
                 }});
+//                fetching from database
                 Document projection = new Document("TITLE", 1).append("URL", 1).append("KEYWORDS",1).append("_id", 0);
                 FindIterable<Document> iterable = collection.find(filter).projection(projection);
                 List<Document> documents = new ArrayList<>();
@@ -60,16 +62,24 @@ public class query {
 
                 ArrayList<Document> final_result = new ArrayList<>();
                 for (Document doc : documents) {
-                    String [] temp_list=doc.get("KEYWORDS", String.class).split(" ");
-                    ArrayList<String> url_Keywords =new ArrayList<>(Arrays.asList(temp_list) ) ;
+//                    String [] temp_list=doc.get("KEYWORDS", String.class).split(" ");
+                    String url_Keywords = doc.get("KEYWORDS", String.class);
                     String snippet;
 
                     String search = exact_query;
                     int index = url_Keywords.indexOf(search);
+                    if(index==-1)
+                    {
+                        snippet="NO SNIPPET";
+                    }
+                    else
+                    {
 
-                    int start = Math.max(index - 15, 0);
-                    int end = Math.min(index + 15, url_Keywords.size() - 1);
-                    snippet = String.join(" ", Arrays.copyOfRange(url_Keywords.toArray(new String[0]), start, end + 1));
+                    int start = Math.max(index - 150, 0);
+                    int end = Math.min(index + 150, url_Keywords.length() - 1);
+                    snippet = url_Keywords.substring(start,end);
+                    }
+
 
                     Document link_doc = new Document("URL", doc.get("URL", String.class))
                             .append("TITLE", doc.get("TITLE", String.class))

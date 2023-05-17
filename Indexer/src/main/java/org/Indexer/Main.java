@@ -90,6 +90,7 @@ public class Main {
         }
 
         for (linkData l : crawlerData) {
+//            for each link we get the stemmed keywords then we group them by unique keywords and then add the number of occurrences
             Arrays.stream(l.getSTEMMED_KEYWORDS())
                     .collect(Collectors.groupingBy(s -> s))
                     .forEach((k, v) -> {
