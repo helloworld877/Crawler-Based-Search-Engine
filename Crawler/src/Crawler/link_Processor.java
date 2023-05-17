@@ -104,7 +104,7 @@ public class link_Processor extends Thread {
                 Matcher matcher = latinPattern.matcher(Keywords);
                 if (matcher.find()) {
 
-//                    string doesn't contain English only
+//                    string contains arabic
                     continue;
                 }
 
