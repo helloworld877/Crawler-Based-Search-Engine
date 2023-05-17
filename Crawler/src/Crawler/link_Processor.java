@@ -95,7 +95,7 @@ public class link_Processor extends Thread {
                 //          Title of the Document
                 String Title = doc.title();
                 //            all anchor tags in document
-                ArrayList<String> links = new ArrayList<String>();
+//                ArrayList<String> links = new ArrayList<String>();
                 //`         All Keywords in the document
                 String Keywords = doc.body().text();
 
